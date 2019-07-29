@@ -1,0 +1,208 @@
+# Date-Picker-Pure-JavaScript
+
+<!DOCTYPE html>
+<html>
+<script>
+var year;
+         var month;
+         
+           function cal(m, yr){
+
+                      var d = new Date();
+                      //var oldCalendar;
+                      var month_name = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+         
+                      month = (m=='NA')?d.getMonth():(m=='I')?++month:(m=='D')?--month:month; // (return) 0-11
+                      var current_day = d.getDate();
+                      year = (yr=='NA')?d.getFullYear():(yr=='I')?++year:(yr=='D')?--year:year;  // (return) 2016
+         
+                      //Logic to maintain the month as per array index value and for prev and next year
+                      if(month==-1){
+                        month=11;
+                        --year;
+                      }else if(month==12){
+                        month=0;
+                        ++year;
+                      }
+         
+                      var first_date = month_name[month] + " " + 1 + " " + year;  // (return) july 1 2016
+                      var tmp = new Date(first_date).toDateString(); // (return) Fri 01 July 2016 ......
+                      var first_day = tmp.substring(0,3); // (return) Fri
+                      var day_name = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+                      var day_no = day_name.indexOf(first_day); // (return) 5
+                      var days = new Date(year, month+1, 0).getDate(); // (return) Total number no. of days in the current Month
+                      
+                      var calendar = get_calendar(day_no, days, current_day);
+                      
+                      document.getElementById("calendar-month-year").innerHTML = month_name[month]+" "+year;
+                      document.getElementById("calendar-dates").innerHTML="";
+                      document.getElementById("calendar-dates").appendChild(calendar);
+                      
+         
+         
+         }
+         
+         
+         function get_calendar(day_no, days, current_day){ //Pass the parameter day_no & days
+
+          var table = document.createElement('table');
+          var tr = document.createElement('tr');
+         
+         
+          //row for the day letters
+          for (var c=0; c<=6; c++){
+                      var td = document.createElement('td');
+                      td.innerHTML = "SMTWTFS"[c];
+                      tr.appendChild(td);
+          }
+          table.appendChild(tr);
+         
+          //Create the second row
+          tr = document.createElement('tr');
+          var c;
+          var count = 1;
+          for(c=0; c<=6; c++){
+            var td = document.createElement('td');
+                      if(c >= day_no){
+                        if(current_day==count && year== new Date().getFullYear() && month== new Date().getMonth())
+                          td.innerHTML="<b>"+count+"</b>";
+                        else
+                          td.innerHTML = count;
+                        count++;
+                       
+                      }else{
+                        
+                      td.innerHTML = "";
+                    }
+                    tr.appendChild(td);
+          }
+         
+         table.appendChild(tr);
+         
+          for(var r=2; r<=6; r++){
+                        tr = document.createElement('tr');
+                        for(var c=0; c<=6; c++){
+                                      if(count > days){
+                                                      table.appendChild(tr);
+         
+                                                      return table;
+                                      }
+         
+                                      var td = document.createElement('td');
+                                      if(current_day==count && year== new Date().getFullYear() && month== new Date().getMonth())
+                                          td.innerHTML="<b>"+count+"</b>";
+                                      else
+                                        td.innerHTML = count;
+                                      count++;
+                                      tr.appendChild(td);
+                        }
+                        table.appendChild(tr);
+         
+         }
+         }
+
+         function date_pick(){
+          document.getElementById('calendar-container').style.display = "block";
+
+         }
+         function date_pick1(){
+          document.getElementById('calendar-container').style.display = "none"
+         }
+
+         var tbl = document.getElementsByName("table");
+        if (tbl != null) {
+            for (var i = 0; i < tbl.rows.length; i++) {
+                for (var j = 0; j < tbl.rows[i].cells.length; j++)
+                    tbl.rows[i].cells[j].onclick = function () { getval(this); };
+            }
+        }
+ 
+        function getval(cel) {
+            alert(cel.innerHTML);
+        }
+</script>
+<style>
+#calendar-container{
+         width: 20%;
+         padding: 10px;
+         background: #ccc;
+         border-radius: 10px;
+         display: none;
+         position: absolute;
+         top:23px;
+
+         }
+         table td b{
+         color: red
+         }
+         table tr td{
+          cursor: pointer;
+         }
+         table tr:first-child{
+          cursor: default;
+         }
+         table{
+          text-align: center;
+          width: 100%
+         }
+         table tr td:hover{
+            background: green;
+            color: #fff;
+         }
+         #calendar-header div{
+          float: left;
+          padding: 0px 3px;
+          padding-bottom: 10px;
+         }
+         #calendar-header div span a{
+          text-decoration: none;
+          background:#000;
+          color: #fff;
+          margin: 0px 5px;
+          padding: 2px;
+          border-radius: 4px;
+         }
+         #calendar-header div span a:hover{
+            background: red;
+            color: #000;
+         }
+         #calendar-header div:nth-child(2){
+          width:48%;
+          text-align:center;
+         }
+         #calendar-header{
+          float: left;
+          width: 100%;
+         } 
+</style>
+<body onload="cal('NA','NA')">
+      
+      <div style="position:relative">
+      <div id="calendar-container">
+         <div id="calendar-header">
+            <div>
+            <span id="calendar-Prev" style="float:left">
+            <a href="#" onclick="cal('0','D')" class="prev-year"> < </a>
+            <a href="#" onclick="cal('D','0')" class="prev-month"> << </a> 
+            </span>
+            </div>
+            <div>
+             <span id="calendar-month-year">
+            </span>
+            </div>
+            <div>
+            <span id="calendar-next" style="float:right">
+            <a href="#" onclick="cal('I','0')" class="next-month"> >> </a>
+            <a href="#" onclick="cal('0','I')" class="next-year"> > </a>
+            </span>
+            </div>
+         </div>
+         <div id="calendar-dates" style="clear:both">
+         </div>
+      </div>
+      <input type="textbox" name="" id="datepick" onfocus="date_pick();">
+      </div>
+   </body>
+</html>
+
+
